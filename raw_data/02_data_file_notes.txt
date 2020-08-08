@@ -1,0 +1,26 @@
+
+Includes what information/variable names might be important moving forward.
+Also notes what variable the files could be used to merge.
+______________________________________________________________
+
+---- SEC0A: Survey Information ----
+Base info
+Location + Language
+
+---- SEC0B: Survey Information continued ----
+REGION - Region info.
+
+---- SEC0C: Survey Information continued ----
+Not needed
+
+---- SEC1: Household Roster ----
+Includes info on all members of a household
+PID - Person ID
+
+---- SEC2A: Education - General Education ----
+PID - Person ID
+
+---- SEC2B: Education - Educational Career ----
+
+
+---- SEC2C: Education - Literacy / Apprenticeship ----
