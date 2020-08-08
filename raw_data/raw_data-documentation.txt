@@ -1,0 +1,53 @@
+---- G4Intman.pdf ----
+Survey questionaire clarification (does not include all questions)
+
+Household Roster - Pg. 22
+Education - Pg. 26
+Agriculture - Pg. 46
+
+
+---- G4QPartA.pdf ----
+Household Questionaire - Part A
+
+Household Roster - Pg. 7
+Education - Pg. 10
+
+
+---- G4QPartB.pdf ----
+Household Questionaire - Part B
+
+Agriculture - Pg. 6
+
+
+---- G4QComm.pdf ----
+Community Questionaire
+Includes which questions to skip to if necessary
+
+Demographic Information - Pg. 3
+Education - Pg. 12
+Agriculture - Pg. 20
+
+
+---- G4QPrice.pdf ----
+Price Questionaire
+Code - Item - Description (qty)
+Includes quantitiy of item per price
+
+
+---- G4USERSG.pdf ----
+Description of data files & variables
+*** Use while manipulating existing data files ***
+
+Part A: 26-Variables, 5,998-Records
+Part B: 29-Variables, 4,109-Records
+
+
+---- Aggregate.pdf ----
+Includes information about how the data set has originally been cleaned.
+Includes summary of outliers and Misc. values (pg. 20)
+
+Missing values are re-estimated (pg. 10)
+	Commodities: Replaced with mean value of the standarized variable in the locality
+	Expenditures dependant on household size: Replaced with mean per capita in locality X size of household
+	Otherwise: Replaced with national level mean (national per capita mean X household size)
+Zero values are explicitly identified
