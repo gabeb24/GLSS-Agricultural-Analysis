@@ -26,7 +26,7 @@ subagg2 <- read_dta("raw_data/glss4_new/glss4_new/aggregates/subagg2.dta")
 hh <- read_dta("raw_data/glss4_new/__MACOSX/glss4_new/._sec1.dta")
 
 # Check Variable names
-variables <- names(survey_info_1)
+variables <- names(survey_info_a)
 
 variables <- names(hh)
 
