@@ -1,26 +1,85 @@
 
 Includes what information/variable names might be important moving forward.
-Also notes what variable the files could be used to merge.
+Notes what variable the files could be used to merge.
 ______________________________________________________________
 
 ---- SEC0A: Survey Information ----
+NH - Household ID
+CLUST - Enumeration area number (4###)
+EANNUM - Enumeration area number (Last 3 digits of CLUST)
+
 Base info
-Location + Language
+REGION + DISTRICT + Location + Language
 
 ---- SEC0B: Survey Information continued ----
-REGION - Region info.
+Not needed, all info covered in SEC0A - KJ
 
 ---- SEC0C: Survey Information continued ----
-Not needed
+Not needed, all info covered in SEC0A - KJ
 
 ---- SEC1: Household Roster ----
 Includes info on all members of a household
+NH - Household ID
+CLUST - Enumeration area number (4###)
 PID - Person ID
 
 ---- SEC2A: Education - General Education ----
+NH - Household ID
+CLUST - Enumeration area number (4###)
 PID - Person ID
 
 ---- SEC2B: Education - Educational Career ----
-
+NH - Household ID
+CLUST - Enumeration area number (4###)
+PID - Person ID
 
 ---- SEC2C: Education - Literacy / Apprenticeship ----
+NH - Household ID
+CLUST - Enumeration area number (4###)
+PID - Person ID
+
+---- Skipped SEC3A to SEC7 ----
+
+---- SEC8A11: Agriculture - Land ----
+NH - Household ID
+
+---- SEC8A2: Agriculture - Livestock and Fishing ----
+NH - Household ID
+
+---- SEC8A3: Agriculture - Agric equipment ----
+NH - Household ID
+
+---- SEC8B: Agriculture - Plot details ----
+NH - Household ID
+
+---- SEC8C1: Agriculture - Harvest and disposal of staple grains, field and cash crops ----
+NH - Household ID
+
+---- SEC8C2: Agriculture - Harvest and disposal of roots, fruits, vegetables etc. ----
+NH - Household ID
+
+---- SEC8D: Agriculture - Seasonality of sales and purchases (key staples only) ----
+NH - Household ID
+
+---- SEC8E: Agriculture - Other agricultural income (in cash and kind) ----
+NH - Household ID
+
+---- SEC8F: Agriculture - Agricultural costs and expenses ----
+NH - Household ID
+
+---- SEC8G: Agriculture - Process of agricultural produce ----
+NH - Household ID
+
+---- SEC8HID: Agriculture - ID's of respondents for home consumption ----
+NH - Household ID
+
+---- SEC8H: Agriculture - Consumption of home produce ----
+NH - Household ID
+
+---- AGG2 ----
+CLUST - Enumeration Area number
+NH - Household ID
+
+---- SUBAGG2 ----
+CLUST - Enumeration Area number
+NH - Household ID
