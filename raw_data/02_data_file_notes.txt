@@ -3,6 +3,8 @@ Includes what information/variable names might be important moving forward.
 Notes what variable the files could be used to merge.
 ______________________________________________________________
 
+ADDING MORE VARIABLES
+
 ---- SEC0A: Survey Information ----
 NH - Household ID
 CLUST - Enumeration area number (4###)
