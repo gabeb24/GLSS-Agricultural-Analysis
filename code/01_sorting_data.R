@@ -15,7 +15,7 @@ education <- read_dta("raw_data/glss4_new/glss4_new/sec2a.dta")
 edu_career <- read_dta("raw_data/glss4_new/glss4_new/sec2b.dta")
 edu_lit <- read_dta("raw_data/glss4_new/glss4_new/sec2c.dta")
 
-agriculture <- read_dta("raw_data/glss4_new/glss4_new/sec8a1.dta")
+agriculture_land <- read_dta("raw_data/glss4_new/glss4_new/sec8a1.dta")
 
 agg2 <- read_dta("raw_data/glss4_new/glss4_new/aggregates/agg2.dta")
 subagg2 <- read_dta("raw_data/glss4_new/glss4_new/aggregates/subagg2.dta")
