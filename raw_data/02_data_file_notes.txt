@@ -3,20 +3,20 @@ Includes what information/variable names might be important moving forward.
 Notes what variable the files could be used to merge.
 ______________________________________________________________
 
-ADDING MORE VARIABLES
-
 ---- SEC0A: Survey Information ----
 NH - Household ID
 CLUST - Enumeration area number (4###)
 EANNUM - Enumeration area number (Last 3 digits of CLUST)
 
-Base info
-REGION + DISTRICT + Location + Language
+REGION - Region ID
+DISTRICT - District ID
+RESLAN - Language used by respondent (7 options + other)
+EZ - ecological zone number (ie. costal, forest, savannah)
+LOC2 - Urban vs. Rural
+LOC5 - accra, other urban, rural costal, rural forest, rural savannah
+LOC3 - accra, other urban, or rural
 
----- SEC0B: Survey Information continued ----
-Not needed, all info covered in SEC0A - KJ
-
----- SEC0C: Survey Information continued ----
+---- SEC0B and SEC0C: Survey Information continued ----
 Not needed, all info covered in SEC0A - KJ
 
 ---- SEC1: Household Roster ----
@@ -25,58 +25,340 @@ NH - Household ID
 CLUST - Enumeration area number (4###)
 PID - Person ID
 
+MAR - marital status
+S1Q15 - Father's educational level
+S1Q16 - Father's work
+S1Q19 - Mother's educational level
+S1Q20 - Mother's work
+* Create new varible for total people in households *
+
 ---- SEC2A: Education - General Education ----
 NH - Household ID
 CLUST - Enumeration area number (4###)
 PID - Person ID
+
+S2AQ1 - Ever attended school
+S2AQ2 - Highest level completed
+S2AQ3 - Highest educational qualifications
+S2AQ5A - Hours spent to/from school
+S2AQ13A - Total school expenses
+S2AQ15 - Have a scholarship
+S2AQ17 - Left school now
 
 ---- SEC2B: Education - Educational Career ----
 NH - Household ID
 CLUST - Enumeration area number (4###)
 PID - Person ID
 
+S2BQ1 - Attended Tech/Voc. school
+S2BQ2 - Course years completed
+S2BQ3 - Highest Cert. achieved
+S2BQ8 - Highest tertiary qualification
+
 ---- SEC2C: Education - Literacy / Apprenticeship ----
 NH - Household ID
 CLUST - Enumeration area number (4###)
 PID - Person ID
 
----- Skipped SEC3A to SEC7 ----
+S2CQ1 - Read letter in English
+S2CQ2 - Read Ghanaian language
+S2CQ3 - Can write in English
+S2CQ4 - Can write Ghanaian language
+S2CQ5 - Can do written calculations
+S2CQ7 - Been apprentice
+S2CQ12 - Attended short training
 
----- SEC8A11: Agriculture - Land ----
+---- SEC3A / B / C / D : Health ----
+(conditions past 2 weeks, preventative, postnatal care, fertitliy) 
+Nothing directly applicable to Agriculture or Education - KJ
+
+---- SEC4A: Employment and Time Use (past 12 months) ----
 NH - Household ID
+CLUST - Enumeration area number
+PID - Person ID
+
+S4Q3 - Worked on farm
+S4AQ5 - kind of work (refer to Annex)
+S4AQ7 - Any other work
+S4AQ9 - Did occupation over same period?
+
+---- SEC4B / C / D / E / F: Employment and Time Use ----
+(Characteristics of Main occupation, 2nd occupation, 3rd occupation, 4th occupation)
+NH - Household ID
+CLUST - Enumeration area number
+PID - Person ID
+
+S4BQ8 / / S4DQ11 / S4EQ11 - Employment status (agric)
+S4BQ9 / S4CQ12 / S4DQ12 / S4EQ12 - Work for whom
+
+---- SEC4F / G / H / J: Employment and Time use ----
+(Employment Search, Activity Status - last 7 days, Employment History, Housekeeping)
+
+* Might want to see how SEC4J: Housekeeping impacts education *
+Nothing directly applicable to agriculture - KJ
+
+---- SEC5: Migration ----
+* Includes proir living situation which could provide background info*
+Nothing directly applicable to agriculture - KJ
+
+---- SEC6: Identification of Farm and non-Farm Enterprises ----
+(Identification of respondents for sections 8 to 10)
+
+NH - Household ID
+CLUST - Enumeration area number
+
+S6Q1 - Own / operate farm
+S6Q4 - Fish process for sale
+S6Q8 - Operate own business
+
+---- SEC7: Housing ----
+Not directly applicable to agriculture - KJ
+Housing situation might impact education - KJ
+
+---- SEC8A1: Agriculture - Land ----
+NH - Household ID
+CLUST - Enumeration Area number
+
+S8AQ1 - HH own any land currently?
+S8AQ2 - HH own any lang past 112 months?
+S8AQ3 - Unit of plot area
+S8AQ4 - Land owned by HH
+S8AQ5 - Was any land bought
+S8AQ6 - Amount paid for land
+S8AQ7 - Land bourght 2 years prior
+S8AQ8 - Amount paid for land
+S8AQ9 - Was any land sold
+S8AQ10 - Amount got from sold land
+S8AQ11 - Land sold 2 years prior
+S8AQ12 - Amount received
+S8AQ13 - Was any land rented out
+S8AQ14 - How much lang rented out
+S8AQ15 - Amount from land rented out
+S8AQ16 - Land for sharecropping
+S8AQ17 - How much lang for S-cropping
+S8AQ18 - Amount recieved from S-cropping
+S8AQ19 - Proportion of harvest recieved by HH
+
+*** Is WHO important? Should we keep track of which family member? ***
 
 ---- SEC8A2: Agriculture - Livestock and Fishing ----
 NH - Household ID
+CLUST - Enumeration Area number
+
+LIVSTCD - Livestock code
+S8AQ21 - Member raised livestock
+S8AQ22A - How many are there
+S8AQ22B - Unit of measure
+S8AQ23 - How much sell one today
+S8AQ24 - Any livestock been sold?
+S8AQ25A - How many livestock sold?
+S8AQ25B - Unit of measure
+S8AQ26 - Total value of sales
+S8AQ27 - Any livestock been bought
+S8AQ28A - How many livestock bought
+S8AQ28B - Unit of measure (crate, bowl, basket, other)
+S8AQ29 - Total value of purchase
+S8AQ30 - Rent out any animal
+S8AQ31 - Amount from renting
 
 ---- SEC8A3: Agriculture - Agric equipment ----
 NH - Household ID
+CLUST - Enumeration Area number
+
+EQCDOWN - Agric equipment code
+S8AQ33 - Member own any equipment
+S8AQ34 - How many equipment
+S8AQ35 - Value if sold now
+S8AQ36 - Any equipment rented out
+S8AQ37 - Value of equipment rented out
+S8AQ38 - Sell any equipment
+S8AQ39 - total value of equipment sold
 
 ---- SEC8B: Agriculture - Plot details ----
 NH - Household ID
+CLUST - Enumeration Area
+
+*** Info about who owns, right to sell
+S8BQ8 - How land was obtained
+S8BQ9 - Cost of rented land
+S8BQ10 - Proportion of cros to landlord
+S8BQ12A / B - Crops growing (the most important in terms of revenue)
+S8BQ13A / B / C / D - Crop code (Two most important in terms of revenue)
 
 ---- SEC8C1: Agriculture - Harvest and disposal of staple grains, field and cash crops ----
 NH - Household ID
+CLUST - Enumeration Area number
+
+CROPCD - Harvested any crop
+S8CQ3A - Crop quantity harvested
+S8CQ3B - Unit of measure
+S8CQ4A - Harvest given to landlord
+S8CQ4B - Unit of measure
+S8CQ5 - Sell any unprocessed
+S8CQ6 - Main outlet of harvest sold
+S8CQ7A - Quantity sold to main outlet
+S8CQ7B - Unit of measure
+S8CQ8 - Values of grains sold
+S8CQ9 - How promptly paid
+S8CQ10A - Harvest sold through other outlets
+S8CQ10B - Units of measure
+S8CQ11 - Value of grains sold
+S8CQ12 - Acreage of crops sold
+S8CQ13 - Total value of all harvest
+S8CQ14A - Harest processed by HH
+S8CQ14B - Unit of measure
+S8CQ15A - Harvest used as seed
+S8CQ15B - Unit of measure
+S8CQ16A - Harvest given to labour
+S8CQ16B - Unit of measure
+S8CQ17A - Males employed on farm
+S8CQ17B - Females employed on farm
 
 ---- SEC8C2: Agriculture - Harvest and disposal of roots, fruits, vegetables etc. ----
 NH - Household ID
+CLUST - Enumeration Area number
+
+ROOTCD - Root crops code
+S8CQ20 - Harvest any root crops
+S8CQ21A - Quantity harvested
+S8CQ21B - Unit of measure
+S8CQ22 - Total value of all roots harvested
+S8CQ23A - Harvest given to landlord
+S8CQ23B - Unit of measure
+S8CQ24 - Sell any root harvested
+S8CQ25A - Number of unit sold
+S8CQ25B - Unit of measure
+S8CQ26 - Value of roots sold
+S8CQ27A - How much processed - 2 weeks
+S8CQ27B - Unit of measure
+S8CQ28A - Harvest given to labour
+S8CQ28B - Unit of measure
 
 ---- SEC8D: Agriculture - Seasonality of sales and purchases (key staples only) ----
 NH - Household ID
+CLUST - Enumeration area number
+
+CRPSEACD - Crop code
+S8DQ1 - Was crop grown
+S8DQ2A to L - Harvested in January to December by month
+S8DQ3A to L - Sales in January to December by month
+S8DQ4A to L - Consume in January to December by month
+S8DQ5A - Quantity in store now
+S8DQ5B - Unit of measure
+S8DQ6A - Quantity in store 12 months ago
+S8DQ6B - Units of measure
 
 ---- SEC8E: Agriculture - Other agricultural income (in cash and kind) ----
 NH - Household ID
+CLUST - Enumeration Area number
+
+S8EQ1 - Hunting including snails
+S8EQ2 - Honey
+S8EQ3 - Palm wine / Akpeteshie
+S8EQ4 - Fruit / Berries
+S8EQ5 - Milk
+S8EQ6 - Other dairy products
+S8EQ7 - Eggs
+S8EQ8 - Hides, wool and skin
+S8EQ9 - Mushrooms
 
 ---- SEC8F: Agriculture - Agricultural costs and expenses ----
 NH - Household ID
+CLUST - Enumeration Area numer
+
+CRPEXPCD - Item Code
+S8FQ1 - Spend anything on item
+S8FQ2 - Amount spent on item
+S8FQ3 - Source of item
+S8FQ4 - Was item unobtainable anytime
 
 ---- SEC8G: Agriculture - Process of agricultural produce ----
 NH - Household ID
+CLUST - Enumeration area number
+
+PROAGRCD - Processed food code
+S8GQ4 - Months did activity
+S8GQ5 - Processed any past 2 weeks
+S8GQ6A - Quantity processed past 2 weeks
+S8GQ6B - Unit of measure
+S8GQ7 - Labour cost in cash/kind
+S8GQ8 - Source of raw materials
+S8GQ9 - Other cost inccured
+S8GQ10 - Sell any processed food
+S8GQ11A - Quantity sold
+S8GQ11B - Unit of measure
+S8GQ12 - Value of sales
+S8GQ13A - Unit of measure
+S8GQ13B - Value of one unit
 
 ---- SEC8HID: Agriculture - ID's of respondents for home consumption ----
 NH - Household ID
+CLUST - Enumeration Area number (4###)
+EANUM - Enumeration Area number (###)
 
----- SEC8H: Agriculture - Consumption of home produce ----
+REGION - Region ID
+
+---- SEC8H: Agriculture - Consumption of home/own produce ----
 NH - Household ID
+CLUST - Enumeration Area number
+
+HOMAGRCD - Own produce item code
+S8HQ1 - HH consume any home produce
+S8HQ2 - No. of months eat home produce
+S8HQ3 to 8 - 2nd to 7th visit units consumed
+S8HQ9 - Unit of measure
+S8HQ10 - Value of one unit
+
+---- SEC9A11 / 9A12 / 9A2 / 9B0: Household Ependiture ----
+- ID of persons interviewed and those responsible for purchases
+- Non food expenses - less frequently purchased items
+- Non-food expenditure: Frequently purchased items
+- ID of persons innterviewed and responsible for purchases
+
+Nothing directly related to Agriculture or Education - KJ
+
+---- SEC9B: Household Expenditure - Food Expenses ----
+NH - Household ID
+CLUST - Enumeration Area number
+
+FDEXPCD - Expenditure item code
+S9BQ1 to S9BQ6 - 2nd to 7th visit amount spent
+
+---- SEC9C: Household Expenditure - Availability of selected consumer items ----
+NH - Household ID
+CLUST - Enumeration Area number
+
+AVAILCD - Item
+S9CQ1 - Tried to purchase item
+S9CQ2 - Shortages compared
+
+---- SEC10A / 10B / 10C / 10D / 10E: Non-Farm Enterprises ----
+- Basic characteristics of non-farm enterprises *** If we want to look into competiton look here ***
+- Expenditure of enterprises
+- Assets *** Land is considered an asset, includes why item was sold ***
+- Revenue of enterprise
+- Net income and inventory of enterprise
+
+Nothing directly related to Agriculture or Education - KJ
+
+---- SEC11A1 / 11A2 / 11B1 / 11B2: Income transfer and Miscellaneous Income and Expenditure ----
+- Transfer payments made by household
+
+Nothing directly related to Agriculture or Education - KJ
+
+---- SEC11C / 11D: Income transfer and Miscellaneous Income and Expenditure ----
+- Miscellaneous Income
+- Miscellaneous Expenditure
+
+Nothing directly related to Agriculture or Education - KJ
+
+---- SEC12A1 / A2 / 12B: Credit, Assets, and Savings ----
+- Credit
+- A2 - Purpose of loan includes agric.
+- Assets and durable consumer goods
+- Savings
+
+Nothing directly related to Agriculture or Education - KJ
 
 ---- AGG2 ----
 CLUST - Enumeration Area number
