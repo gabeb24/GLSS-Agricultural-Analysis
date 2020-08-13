@@ -37,10 +37,12 @@ livestock_exp <- read_dta('raw_data/glss4_new2/aggregates/exp5.dta')
 processing_cost <- read_dta('raw_data/glss4_new2/aggregates/exp6.dta')
 #level of individual product
 #proagrcd: individual product
+
   
 hp_consumption <- read_dta('raw_data/glss4_new2/aggregates/exp7.dta')
 #homagrcd: type of prodcut consumed?
 #The consumption seems to be measured in months 0 - 12
+
 
 farm_equip_dep <- read_dta('raw_data/glss4_new2/aggregates/exp12.dta')
 #at level of individual item
@@ -66,7 +68,8 @@ est_rent_parents <- read_dta('raw_data/glss4_new2/aggregates/exp19.dta')
 #hh level
 #2180 obs
 
-                      #Subaggregates 1-20 (household level)
+
+#-------Subaggregates 1 - 20 --------
 
 schol_val <- read_dta('raw_data/glss4_new2/aggregates/subagg1.dta')
 #3674 obs
