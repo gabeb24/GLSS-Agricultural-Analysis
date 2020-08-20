@@ -48,6 +48,7 @@ farm_equip_dep <- read_dta('raw_data/glss4_new2/aggregates/exp12.dta')
 #at level of individual item
 #eqcdown: farm equipment item type
 
+
 remittance <- read_dta('raw_data/glss4_new2/aggregates/exp14.dta')
 #at level of individual remittance
 #trexpcd: is NA for all observations
@@ -68,8 +69,6 @@ est_rent_parents <- read_dta('raw_data/glss4_new2/aggregates/exp19.dta')
 #hh level
 #2180 obs
 
-
-#-------Subaggregates 1 - 20 --------
 
 schol_val <- read_dta('raw_data/glss4_new2/aggregates/subagg1.dta')
 #3674 obs

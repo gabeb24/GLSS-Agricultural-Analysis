@@ -1,8 +1,28 @@
-#Aggregate Variable Sorting
+#Potential dependent Variable to examine
+total_ag_income <- read_dta('raw_data/glss4_new2/aggregates/agg2.dta')
 
-library(tidyverse)
-library(haven)
 
+
+#I think by looking at the relationship between some of these aggregate variables
+#will help us to test the variables that are added together to make them!
+
+rent_income <- read_dta('raw_data/glss4_new2/aggregates/agg4.dta')
+
+remittance_income <- read_dta('raw_data/glss4_new2/aggregates/agg5.dta')
+
+
+food_expense <- read_dta('raw_data/glss4_new2/aggregates/agg7.dta')
+
+house_expense <- read_dta('raw_data/glss4_new2/aggregates/agg8.dta')
+
+
+other_expense <- read_dta('raw_data/glss4_new2/aggregates/agg9.dta')
+
+
+estimated_other_expense <- ('raw_data/glss4_new2/aggregates/agg11.dta')
+
+
+remittance_expense <- read_dta('raw_data/glss4_new2/aggregates/agg12.dta')
 
 #Potential dependent Variable to examine: Total income from agriculture per household
 total_ag_income <- read_dta('raw_data/glss4_new/aggregates/agg2.dta')
@@ -18,9 +38,3 @@ remittance_income <- read_dta('raw_data/glss4_new/aggregates/agg5.dta')
 remittance_expense <- read_dta('raw_data/glss4_new/aggregates/agg12.dta')
 
 #Households that are employed in aggriculture might spend less money on food than the typical worker
-food_expense <- read_dta('raw_data/glss4_new/aggregates/agg7.dta')
-
-
-
-
-
