@@ -125,7 +125,7 @@ S8AQ3 - Unit of plot area
 S8AQ4 - Land owned by HH
 S8AQ5 - Was any land bought
 S8AQ6 - Amount paid for land
-S8AQ7 - Land bourght 2 years prior
+S8AQ7 - Land bought 2 years prior
 S8AQ8 - Amount paid for land
 S8AQ9 - Was any land sold
 S8AQ10 - Amount got from sold land
@@ -181,7 +181,7 @@ CLUST - Enumeration Area
 *** Info about who owns, right to sell
 S8BQ8 - How land was obtained
 S8BQ9 - Cost of rented land
-S8BQ10 - Proportion of cros to landlord
+S8BQ10 - Proportion of crops to landlord
 S8BQ12A / B - Crops growing (the most important in terms of revenue)
 S8BQ13A / B / C / D - Crop code (Two most important in terms of revenue)
 
@@ -364,6 +364,68 @@ Nothing directly related to Agriculture or Education - KJ
 CLUST - Enumeration Area number
 NH - Household ID
 
----- SUBAGG2 ----
-CLUST - Enumeration Area number
-NH - Household ID
+AGRI1 = CRPINC1 + CRPINC2 + ROOTINC + INCOTHAG + TRCRPINC + HOMEPRO 
+        - EXPLAND - EXCROP - EXLIV - EXPFDPR1 - EXPFDPR2
+AGRI1C= CRPINC1 + CRPINC2 + ROOTINC + INCOTHAG + TRCRPINC + HOMEPROC 
+        - EXPLAND - EXCROP - EXLIV - EXPFDPR1 - EXPFDPR2
+(from files SUBAGG13 to SUBAGG16, SUBAGG26, SUBAGG22 to
+SUBAGG25 respectively)
+
+AGRI2 = HOMEPRO + SEFARM
+AGRI2C = HOMEPROC + SEFARM 
+(from SUBAGG26 and SUBAGG7 respectively)
+
+HHAGDEPN = DEPNEQ (SUBAGG31)
+
+
+---- SUBAGG7 ----
+SEFARM = Farm self employment income
+SEFARM = Aggregation of J1SECASH + J2SECASH + J3SECASH + J4SECASH
+(from INC2, INC3, INC4 and INC5 respectively),for agricultural activities
+only, over all members of the household.
+
+---- SUBAGG13 ----
+CRPINC1 = Revenue from sale of cash crops - main outlet
+CRPINC1 = Aggregation of CROPSV1 (INC10) over all crops
+
+CRPINC2 = Revenue from sale of cash crops - other outlet
+CRPINC2 = CROPSV2 (INC10) over all crops
+
+---- SUBAGG14 ---- 
+ROOTINC = Revenue from sales of roots/fruits/vegetables
+ROOTINC = Aggregation of ROOTSV (INC11) over all products
+
+---- SUBAGG15 ---- 
+INCOTHAG = Revenue from other agricultural source
+INCOTHAG = Aggregation of OTHAGINC (INC12) over all products
+
+---- SUBAGG16 ---- 
+TRCRPINC = Revenue from the sale of transformed crop products
+TRCRPINC = INCTRCRP (INC13)
+
+---- SUBAGG22 ---- 
+EXPLAND = Expenditure on renting farm land
+EXPLAND = Aggregation of LANDEXP (EXP3)
+
+---- SUBAGG23 ---- 
+EXPCROP = Expenditure on crop input
+EXCROP = Aggregation of CROPEXP (EXP4)
+
+---- SUBAGG24 ---- 
+EXPLIV = Expenditure on livestock inputs
+EXPLIV = Aggregation of LIVEXP (EXP5)
+
+---- SUBAGG25 ---- 
+EXPFDPR1 = Labour costs on food processing
+EXPFDPR1 = Aggregation of FDPREXP1 (EXP6)
+
+EXPFDFR2 = Other costs on food processing
+EXPFDPR2 = Aggregation of FDPREXP2 (EXP6)
+
+---- SUBAGG26 ---- 
+HOMEPRO = Consumption of home-produce food
+HOMEPRO = HP (EXP7) over all products
+
+---- SUBAGG31 ----
+DEPNEQ = Depreciation of farming equipment
+
