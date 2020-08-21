@@ -1,6 +1,6 @@
 # ---- Data Translation Challenge ----
 
-# Upload appropriate libraries ----
+# ---- Upload appropriate libraries ----
 
 library(tidyverse)  # visualize data
 library(haven)      # load data
@@ -8,33 +8,31 @@ library(ggplot2)
 library(dplyr)
 
 
-# Organize + Read in Data ----
+# ---- Loading relevant data ----
 
 #     Reads in data for WINDOWS
-survey_info_a         <- read_dta("raw_data/sec0a.dta")  # USED Below
 
-# Agriculture files
-agri_land_s8a1        <- read_dta("raw_data/sec8a1.dta")  # USED Below
+survey_info_a   <- read_dta("raw_data/sec0a.dta")   # Survey info + HH location
+agri_land_s8a1  <- read_dta("raw_data/sec8a1.dta")  # Agriculture files
+sec6            <- read_dta("raw_data/sec6.dta")    # ID farm vs. non-farm HH
+occupations     <- read_dta("raw_data/sec4a.dta")   # Form employment - past 12 months
+education       <- read_dta("raw_data/sec2a.dta")   # General education survey questions
+agg2            <- read_dta("raw_data/aggregates/agg2.dta") # Agricultural income & farm depreciation
 
-sec6                  <- read_dta("raw_data/sec6.dta")  # USED Below
+#     Reads in data for OS/MAC
 
-#----Loading relevant datasets----
-  #employment screening questions from employment over past 12 months
-occupations <- read_dta("raw_data/sec4a.dta")
-
-  #General education survey questions
-education <- read_dta("raw_data/sec2a.dta")
-
-
-agg2 <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/aggregates/agg2.dta")
+survey_info_a   <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec0a.dta")
+agri_land_s8a1  <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec8a1.dta")  
+sec6            <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec6.dta")  
+occupations     <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec4a.dta")
+education       <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec2a.dta")
+agg2            <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/aggregates/agg2.dta")
 
 
-education <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec2a.dta")
-
+# ---- Agriculture code ----
 
 # Create base of HH that own and/or operate farm, 
 #     or keep livestock, or engage in fishing
-# Urban pop > 1500, semi-urban 5000 > pop < 1501, rural pop < 1500
 
 agriculture_hh <- sec6 %>%
   select(c(nh, s6q1, clust)) %>%  # track unique HH's
@@ -43,9 +41,9 @@ agriculture_hh <- sec6 %>%
   select(c(nh, clust, region, district, loc2, loc3, loc5))
 
 # Land info
-#   Unit conversion source: 
-#     https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=CSAE2015&paper_id=708
-#     1 pole = 1 acre, 9 rope = 1 acre
+# Unit conversion source: 
+#   https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=CSAE2015&paper_id=708
+#   1 pole = 1 acre, 9 rope = 1 acre
 
 agri_land <- agriculture_hh %>%
   left_join(agri_land_s8a1) %>%       # join land info for HH
@@ -58,23 +56,15 @@ agri_land <- agriculture_hh %>%
   select(c(nh, clust, hh_land_acres))
 
 
+# ---- Education code ----
+
+edu_agg <- left_join(occupations, education) %>% # join tables @ individual level
+  filter(s4aq3 == 1) %>% # Worked on farm
 
 
-
-# Education
-
-#----Joined tables at individual leve;----
-edu_agg <- left_join(occupations, education)
-
-#----Filtered occupations and education on s4aq3 which is a binary variable relating to if they worked on farm or not----
-edu_agg <- edu_agg %>% 
-  filter(s4aq3 == 1)
-
-
-#----Using case_when function to create dummy variables at 4 different levels of education----
+# Using case_when function to create dummy variables at 4 different levels of education
 
 #first column gives a 1 to those with any education above none or NA. All NA values set to 0
-edu_agg <- edu_agg %>% 
   mutate(
     koranic_kinder_educ = case_when(
       is.na(s2aq2) ~ 0,
@@ -121,16 +111,18 @@ hh_edu_ag <- group_by(edu_agg, clust, nh) %>%
   summarize(education_max = max(edu_level))
 
 
-# Income / Expenses / Profit
+# ---- Income / Expenses / Profit ----
 
-#rename data and select only the aggricultural income 2 corrected, cluster, nh, and depriciation and create a new column aggricultural income 2 corrected less depriciation
-aggrev<-select(agg2,clust,nh,agri2c,hhagdepn)%>%
-  mutate(agri2c-hhagdepn)
-#view data
-view(aggrev)
-#take out scientific notation
-options(scipen = 999)
-#view data
-view(aggrev) 
+# rename data and select only the agricultural income 2 corrected, cluster, nh, and depreciation
+#     create a new column agricultural income 2 corrected less depreciation
+aggrev <- select(agg2, clust, nh, agri2c, hhagdepn) %>%
+  mutate(agri2c - hhagdepn)
 
+options(scipen = 999) #take out scientific notation
+
+
+# ---- Joining Agriculture / Education / Profit ----
+
+hh_agri_edu_profit <- left_join(agri_land, hh_edu_ag) %>%   # more observations in edu than agri
+  left_join(aggrev)
 
