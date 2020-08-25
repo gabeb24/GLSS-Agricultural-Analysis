@@ -4,8 +4,6 @@
 
 library(tidyverse)  # visualize data
 library(haven)      # load data
-library(ggplot2)
-library(dplyr)
 
 
 # ---- Loading relevant data ----
@@ -13,56 +11,49 @@ library(dplyr)
 #     Reads in data for WINDOWS
 
 survey_info_a   <- read_dta("raw_data/sec0a.dta")   # Survey info + HH location
-agri_land_s8a1  <- read_dta("raw_data/sec8a1.dta")  # Agriculture files
-sec6            <- read_dta("raw_data/sec6.dta")    # ID farm vs. non-farm HH
-occupations     <- read_dta("raw_data/sec4a.dta")   # Form employment - past 12 months
+agri_plot_s8b   <- read_dta("raw_data/sec8b.dta")   # Agriculture - Plot Details
 education       <- read_dta("raw_data/sec2a.dta")   # General education survey questions
 agg2            <- read_dta("raw_data/aggregates/agg2.dta") # Agricultural income & farm depreciation
 
-#     Reads in data for OS/MAC
+#     Reads in data for OS/MAC (local folder)
 
 survey_info_a   <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec0a.dta")
-agri_land_s8a1  <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec8a1.dta")  
-sec6            <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec6.dta")  
-occupations     <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec4a.dta")
+agri_plot_s8b  <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec8b.dta") 
 education       <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec2a.dta")
 agg2            <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/aggregates/agg2.dta")
 
 
 # ---- Agriculture code ----
 
-# Create base of HH that own and/or operate farm, 
-#     or keep livestock, or engage in fishing
+# Creates base of HH that own and/or operate farm, or keep livestock, or engage in fishing
+# Use Section 8B for land area
 
-agriculture_hh <- sec6 %>%
-  select(c(nh, s6q1, clust)) %>%  # track unique HH's
-  filter(s6q1 == 1) %>%           # keep only those HH own/operate farm TRUE
-  left_join(survey_info_a) %>%    # add location info to remaining HH's
-  select(c(nh, clust, region, district, loc2, loc3, loc5))
-
-# Land info
-# Unit conversion source: 
+# Unit conversion source:
 #   https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=CSAE2015&paper_id=708
 #   1 pole = 1 acre, 9 rope = 1 acre
 
-agri_land <- agriculture_hh %>%
-  left_join(agri_land_s8a1) %>%       # join land info for HH
-  filter(s8aq3 == 1 |  s8aq3 == 2 | s8aq3 == 3) %>% # keep entries with units we know
-  mutate(hh_land_acres = case_when(
-      s8aq3 == 3 ~ round(s8aq4 / 9),  # converts rope to acres (9:1)
-      TRUE       ~ s8aq4              # keeps poles & acres (1:1)
+agri_land <- agri_plot_s8b %>%
+  filter(s8bq4b == 1 |  s8bq4b == 2 | s8bq4b == 3) %>% # keep entries with units we know
+  mutate(land_acres = case_when(
+      s8bq4b == 3 ~ round(s8bq4a / 9, 2),  # convert rope to acres (9:1)
+      TRUE       ~ s8bq4a                  # keeps poles & acres (1:1)
     )
   ) %>%
-  select(c(nh, clust, hh_land_acres))
+  group_by(nh, clust) %>% 
+  summarize(hh_land_acres = sum(land_acres)) %>%  # keep sum of plots for each HH
+  left_join(survey_info_a) %>%    # add location info to agriculture HH's
+  select(c(nh, clust, hh_land_acres, region, district, loc2, loc3, loc5))
 
 
 # ---- Education code ----
 
-edu_agg <- left_join(occupations, education) %>% # join tables @ individual level
-  filter(s4aq3 == 1) %>% # Worked on farm
+# Split the years of education in three levels 
+# Based on the Section 2A data
 
+edu_agg <- education %>% # general education @ individual level
 
 # Using case_when function to create dummy variables at 4 different levels of education
+#   Variables: koranic_kinder_educ, prim_educ, sec_educ, educ_level
 
 #first column gives a 1 to those with any education above none or NA. All NA values set to 0
   mutate(
@@ -118,11 +109,29 @@ hh_edu_ag <- group_by(edu_agg, clust, nh) %>%
 aggrev <- select(agg2, clust, nh, agri2c, hhagdepn) %>%
   mutate(agri2c - hhagdepn)
 
-options(scipen = 999) #take out scientific notation
+# Un-comment line below if scientific notation appears in data
+# options(scipen = 999) #take out scientific notation
 
 
 # ---- Joining Agriculture / Education / Profit ----
 
-hh_agri_edu_profit <- left_join(agri_land, hh_edu_ag) %>%   # more observations in edu than agri
+hh_agri_edu_profit <- agri_land %>%
+  left_join(hh_edu_ag) %>%   # more observations in edu than agri
   left_join(aggrev)
+
+
+# ---- Analysis ----
+
+model_1 <- lm(data = hh_agri_edu_profit, profit_per_rope ~ education_max)
+summary(model_1)
+
+ggplot(data = hh_agri_edu_profit, 
+       mapping = aes(x = education_max, y = profit_per_rope)) +
+  geom_point()
+
+ggplot(data = hh_agri_edu_profit, 
+       mapping = aes(x = profit_per_rope)) + 
+  geom_histogram() +
+  xlab("Profit per Rope of Land") +
+  labs(title = "Profit per ropes of Land, Grouped by Household")
 
