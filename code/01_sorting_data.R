@@ -34,15 +34,15 @@ agg2            <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/aggreg
 
 agri_land <- agri_plot_s8b %>%
   filter(s8bq4b == 1 |  s8bq4b == 2 | s8bq4b == 3) %>% # keep entries with units we know
-  mutate(land_acres = case_when(
-      s8bq4b == 3 ~ round(s8bq4a / 9, 2),  # convert rope to acres (9:1)
-      TRUE       ~ s8bq4a                  # keeps poles & acres (1:1)
+  mutate(land_ropes = case_when(
+      s8bq4b == 1 ~ round(s8bq4a * 9, 2),  # convert acres to rope (1:9)
+      s8bq4b == 2 ~ round(s8bq4a * 9, 2),  # convert poles to rope (1:9)
+      TRUE        ~ s8bq4a                  # keeps ropes (1:1)
     )
   ) %>%
   group_by(nh, clust) %>% 
-  summarize(hh_land_acres = sum(land_acres)) %>%  # keep sum of plots for each HH
-  left_join(survey_info_a) %>%    # add location info to agriculture HH's
-  select(c(nh, clust, hh_land_acres, region, district, loc2, loc3, loc5))
+  summarize(hh_land_ropes = sum(land_ropes)) %>%  # keep sum of plots for each HH
+  left_join(survey_info_a)    # add location info to agriculture HH's
 
 
 # ---- Education code ----
@@ -107,22 +107,24 @@ hh_edu_ag <- group_by(edu_agg, clust, nh) %>%
 # rename data and select only the agricultural income 2 corrected, cluster, nh, and depreciation
 #     create a new column agricultural income 2 corrected less depreciation
 aggrev <- select(agg2, clust, nh, agri2c, hhagdepn) %>%
-  mutate(agri2c - hhagdepn)
+  mutate(profit = agri2c - hhagdepn)
 
-# Un-comment line below if scientific notation appears in data
-# options(scipen = 999) #take out scientific notation
+options(scipen = 999) #take out scientific notation
 
 
 # ---- Joining Agriculture / Education / Profit ----
 
 hh_agri_edu_profit <- agri_land %>%
+  left_join(aggrev) %>%
   left_join(hh_edu_ag) %>%   # more observations in edu than agri
-  left_join(aggrev)
+  mutate(profit_per_rope = round(profit / hh_land_ropes, 2)) %>%
+  select(c(nh, clust, profit_per_rope, education_max, region, ez, district, loc2, loc3, loc5))
+
 
 
 # ---- Analysis ----
 
-model_1 <- lm(data = hh_agri_edu_profit, profit_per_rope ~ education_max)
+model_1 <- lm(data = hh_agri_edu_profit, profit_per_rope ~ education_max + ez)
 summary(model_1)
 
 ggplot(data = hh_agri_edu_profit, 
