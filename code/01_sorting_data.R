@@ -169,20 +169,23 @@ lit_levels <- hh_read %>%
 
 # rename data and select only the agricultural income 2 corrected, cluster, nh, and depreciation
 #     create a new column agricultural income 2 corrected less depreciation
-aggrev <- select(agg2, clust, nh, agri2c, hhagdepn) %>%
-  mutate(profit = agri2c - hhagdepn)
-
+aggrev <- agg2 %>%
+  select(clust, nh, agri1c, agri2c, hhagdepn) %>%
+  filter(agri1c + agri2c + hhagdepn != 0) %>%      # filter out households w/ no agri income or expenses 
+  mutate(profit = agri1c + agri2c - hhagdepn)      # income minus depreciation
+  
+  
 options(scipen = 999) #take out scientific notation
 
 
 # ---- Joining Agriculture / Education / Profit ----
 
-hh_agri_edu_profit <- agri_land %>%
-  left_join(aggrev) %>%
+hh_agri_edu_profit <- aggrev %>%
+  inner_join(agri_land) %>%
   left_join(hh_edu_ag) %>%   
   left_join(lit_levels) %>%
-  mutate(profit_per_rope = round(profit / hh_land_ropes, 2)) %>%
-  select(c(nh, clust, profit_per_rope, 
+  mutate(profit_per_rope = round(profit / hh_land_ropes, 2)) %>%  # profit per area variable
+  select(c(nh, clust, profit_per_rope,
            education_max, read_max, write_max, calc_max,   # Education / Literacy
            region, ez, district, loc2, loc3, loc5,         # Location based
            )
