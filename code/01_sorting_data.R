@@ -12,14 +12,16 @@ library(haven)      # load data
 
 survey_info_a   <- read_dta("raw_data/sec0a.dta")   # Survey info + HH location
 agri_plot_s8b   <- read_dta("raw_data/sec8b.dta")   # Agriculture - Plot Details
-education       <- read_dta("raw_data/sec2a.dta")   # General education survey questions
+education       <- read_dta("raw_data/sec2a.dta")   # Education - General survey Qs
+literacy        <- read_dta("raw_data/sec2c.dta")   # Education - Literacy / Apprenticeship 
 agg2            <- read_dta("raw_data/aggregates/agg2.dta") # Agricultural income & farm depreciation
 
 #     Reads in data for OS/MAC (local folder)
 
 survey_info_a   <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec0a.dta")
-agri_plot_s8b  <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec8b.dta") 
+agri_plot_s8b   <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec8b.dta") 
 education       <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec2a.dta")
+literacy        <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec2c.dta")
 agg2            <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/aggregates/agg2.dta")
 
 
@@ -47,7 +49,7 @@ agri_land <- agri_plot_s8b %>%
 
 # ---- Education code ----
 
-# Split the years of education in three levels 
+# Split the YEARS OF EDUCATION in three levels 
 # Based on the Section 2A data
 
 edu_agg <- education %>% # general education @ individual level
@@ -102,6 +104,67 @@ hh_edu_ag <- group_by(edu_agg, clust, nh) %>%
   summarize(education_max = max(edu_level))
 
 
+# LITERACY
+
+# Selecting relevant literacy columns
+literacy <- literacy %>% 
+  select(1:9) %>% 
+  
+  # Assigning levels to reading, writing and calculation variables 
+  #   to ease conversion to household level
+  
+  mutate(
+    read_level = case_when(
+      #assigns 3 if they can read english and ghanian
+      #2 if they only read english
+      #1 if they only read ghanian
+      #0 if they don't read either
+      s2cq1 == 1 & s2cq2 != 1 ~ 3,
+      s2cq1 == 1 & s2cq2 == 1 ~ 2,
+      s2cq1 == 2 & s2cq2 != 1 ~ 1,
+      s2cq1 == 2 & s2cq2 == 1 ~ 0
+    )
+  ) %>% 
+  
+  mutate(
+    write_level = case_when(
+      #assigns 3 if they can write english and ghanian
+      #2 if they only write english
+      #1 if they only write ghanian
+      #0 if they don't write either
+      s2cq3 == 1 & s2cq4 != 1 ~ 3,
+      s2cq3 == 1 & s2cq4 == 1 ~ 2,
+      s2cq3 == 2 & s2cq4 != 1 ~ 1,
+      s2cq3 == 2 & s2cq4 == 1 ~ 0,
+    )
+  ) %>% 
+  
+  mutate(
+    calculation = case_when(
+      s2cq5 == 1 ~ 1,
+      s2cq5 == 2 ~ 0,
+    )
+  )
+
+#Grouping all 3 new columns by the household member with the highest level of each:
+#   Reading, Writing, Calculations
+
+#unfortunately wasn't able to do this all by piping once
+hh_read <- group_by(literacy, clust, nh) %>% 
+  summarize(read_max = max(read_level))
+
+hh_write <- group_by(literacy, clust, nh) %>% 
+  summarize(write_max = max(write_level))
+
+hh_calc <- group_by(literacy, clust, nh) %>% 
+  summarize(calc_max = max(calculation))
+
+# Ignore this dataframe
+lit_levels <- hh_read %>%
+  inner_join(hh_write) %>% 
+  inner_join(hh_calc)
+
+
 # ---- Income / Expenses / Profit ----
 
 # rename data and select only the agricultural income 2 corrected, cluster, nh, and depreciation
@@ -116,10 +179,14 @@ options(scipen = 999) #take out scientific notation
 
 hh_agri_edu_profit <- agri_land %>%
   left_join(aggrev) %>%
-  left_join(hh_edu_ag) %>%   # more observations in edu than agri
+  left_join(hh_edu_ag) %>%   
+  left_join(lit_levels) %>%
   mutate(profit_per_rope = round(profit / hh_land_ropes, 2)) %>%
-  select(c(nh, clust, profit_per_rope, education_max, region, ez, district, loc2, loc3, loc5))
-
+  select(c(nh, clust, profit_per_rope, 
+           education_max, read_max, write_max, calc_max,   # Education / Literacy
+           region, ez, district, loc2, loc3, loc5,         # Location based
+           )
+         )
 
 
 # ---- Analysis ----
