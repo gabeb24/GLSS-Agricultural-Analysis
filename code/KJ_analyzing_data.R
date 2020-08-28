@@ -16,11 +16,6 @@ education       <- read_dta("raw_data/sec2a.dta")   # Education - General survey
 literacy        <- read_dta("raw_data/sec2c.dta")   # Education - Literacy / Apprenticeship 
 agg2            <- read_dta("raw_data/aggregates/agg2.dta") # Agricultural income & farm depreciation
 
-community_econ      <- read_dta("raw_data/community/cs2.dta")  # Economy and Infrastructure
-community_edu       <- read_dta("raw_data/community/cs3.dta")  # Education
-commnity_crops      <- read_dta("raw_data/community/cs5a.dta") # Agriculture (Might look into)
-community_agg       <- read_dta("raw_data/community/cs5b.dta") # Agriculture
-
 #     Reads in data for OS/MAC (local folder)
 
 survey_info_a   <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec0a.dta")
@@ -28,11 +23,6 @@ agri_plot_s8b   <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec8b.
 education       <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec2a.dta")
 literacy        <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec2c.dta")
 agg2            <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/aggregates/agg2.dta")
-
-community_econ      <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/cs2.dta") 
-community_edu       <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/cs3.dta")  
-commnity_crops      <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/cs5a.dta") 
-community_agg       <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/cs5b.dta") 
 
 
 # ---- Agriculture code ----
@@ -100,7 +90,7 @@ edu_agg <- education %>% # general education @ individual level
 #edu_level gives a 3 for secondary or above, 2 for primary or above, 1 for koranic/kinder or above
   #0 otherwise
   mutate(
-    edu_level = case_when(
+    edu_level_num = case_when(
       sec_educ == 1 ~ 3,
       prim_educ == 1 ~ 2,
       koranic_kinder_educ == 1 ~ 1,
@@ -111,7 +101,19 @@ edu_agg <- education %>% # general education @ individual level
 #Grouped by household we now see the highest level of our 4 levels of education achieved for each household
 
 hh_edu_ag <- group_by(edu_agg, clust, nh) %>% 
-  summarize(education_max = max(edu_level))
+  summarize(education_max_num = max(edu_level_num)) %>%
+  
+  # Converts the numeric value to categorical labels.
+  #   Ordered highest to lowest: sec_educ, prim_educ, kinder_educ, non_educ
+  mutate(
+    education_max = case_when(
+      education_max_num == 3 ~ "sec_educ",
+      education_max_num == 2 ~ "prim_educ", 
+      education_max_num == 1 ~ "kinder_educ",
+      education_max_num == 0 ~ "non_educ"
+  
+    )
+  )
 
 
 # LITERACY
@@ -169,7 +171,6 @@ hh_write <- group_by(literacy, clust, nh) %>%
 hh_calc <- group_by(literacy, clust, nh) %>% 
   summarize(calc_max = max(calculation))
 
-# Combines read, write, calc
 lit_levels <- hh_read %>%
   inner_join(hh_write) %>% 
   inner_join(hh_calc)
@@ -182,120 +183,8 @@ lit_levels <- hh_read %>%
 aggrev <- agg2 %>%
   select(clust, nh, agri1c, agri2c, hhagdepn) %>%
   filter(agri1c + agri2c + hhagdepn != 0) %>%      # filter out households w/ no agri income or expenses 
-  mutate(profit = agri1c + agri2c - hhagdepn)      # income minus depreciation
-  
-  
-options(scipen = 999) #take out scientific notation
+  mutate(profit = agri1c + agri2c - hhagdepn)      # profit = income minus depreciation
 
-
-# ---- Community ----
-
-# Renaming, selecting, and editing relevant variables in each table to make dummy variables consistent throughout dataset
-# grouping by region, district and eanum because enumeration area number reflects 
-# and adjusting each enumeration area number to match "clust" variables used in household data.
-# taking the minimum values of each column because entries of "2" mean "no" and entries of "1" mean yes
-
-
-community_econ <- community_econ %>% 
-  group_by(region, district, eanum) %>% 
-  summarize(s2q4 = min(s2q4), s2q17 = min(s2q17), s2q19 = min(s2q19), s2q20 = min(s2q20)) %>% 
-  mutate(clust = eanum + 4000) %>% 
-  mutate(
-    road = case_when(
-      s2q4 == 2 ~ 0,
-      s2q4 == 1 ~ 1
-    )
-  ) %>% 
-  mutate(
-    bank = case_when(
-      s2q17 == 2 ~ 0,
-      s2q17 == 1 ~ 1
-    )
-  ) %>% 
-  mutate(
-    daily_market = case_when(
-      s2q19 == 2 ~ 0,
-      s2q19 == 1 ~ 1
-    )
-  ) %>% 
-  mutate(
-    periodic_market = case_when(
-      s2q20 == 2 ~ 0,
-      is.na(s2q20) ~ 0,
-      s2q20 == 1 ~ 1
-    )
-  ) %>% 
-  select(region, district, clust, road, bank, daily_market, periodic_market)
-  
-
-
-community_edu <- community_edu %>% 
-  group_by(region, district, eanum) %>% 
-  summarize(s3q1 = min(s3q1), s3q11 = min(s3q11), s3q20 = min(s3q20)) %>% 
-  mutate(clust = eanum + 4000) %>% 
-  mutate(
-    prim_school = case_when(
-      s3q1 == 2 ~ 0,
-      s3q1 == 1 ~ 1
-    )
-  ) %>% 
-  mutate(
-    jss_school = case_when(
-      s3q11 == 2 ~ 0,
-      is.na(s3q11) ~ 0,
-      s3q11 == 1 ~ 1
-    )
-  ) %>% 
-  mutate(
-    sec_tech_school = case_when(
-      s3q20 == 2 ~ 0,
-      s3q20 == 1 ~ 1
-    )
-  ) %>% 
-  select(region, district, clust, prim_school, jss_school)
-
-
-community_agg <- community_agg %>% 
-  group_by(region, district, eanum) %>%
-  summarize(s5bq5 = min(s5bq5), s5bq10 = min(s5bq10), s5bq17 = min(s5bq17), s5bq20 = min(s5bq20), s5bq23 = min(s5bq23)) %>% 
-  mutate(clust = eanum + 4000) %>% 
-  mutate(
-    agg_ext_center = case_when(
-      s5bq5 == 2 ~ 0,
-      s5bq5 == 1 ~ 1
-    )
-  ) %>% 
-  mutate(
-    community_coop = case_when(
-      s5bq10 == 2 ~ 0,
-      s5bq10 == 1 ~ 1 
-    )
-  ) %>% 
-  mutate(
-    irrigated_fields = case_when(
-      s5bq17 == 2 ~ 0,
-      s5bq17 == 1 ~ 1
-    )
-  ) %>% 
-  mutate(
-    sharecroppers = case_when(
-      s5bq20 == 2 ~ 0,
-      s5bq20 == 1 ~ 1
-    )
-  ) %>% 
-  mutate(
-    farm_mutual_aid = case_when(
-      s5bq23 == 2 ~ 0,
-      s5bq23 == 1 ~ 1
-    )
-  ) %>% 
-  select(region, district, clust, agg_ext_center, community_coop, irrigated_fields, sharecroppers, farm_mutual_aid)
-
-
-#We can now join the community variables with household data based on clust.
-community_full <- community_econ %>% 
-  inner_join(community_edu) %>% 
-  left_join(community_agg)
 
 # ---- Joining Agriculture / Education / Profit ----
 
@@ -303,45 +192,47 @@ hh_agri_edu_profit <- aggrev %>%
   inner_join(agri_land) %>%
   left_join(hh_edu_ag) %>%   
   left_join(lit_levels) %>%
-  left_join(community_full) %>%
-  unite(region_district, region, district, sep = '_') %>% 
   mutate(profit_per_rope = round(profit / hh_land_ropes, 2)) %>%  # profit per area variable
-  select(c(nh, clust, region_district, ez, loc2, loc5,            # Location based
-           profit_per_rope,                                       # Profit variable
-           education_max, read_max, write_max, calc_max,          # HH Education / Literacy
-           road, bank, daily_market, periodic_market,             # Community economy
-           prim_school, jss_school,                               # Community education
-           agg_ext_center, community_coop, irrigated_fields, sharecroppers, farm_mutual_aid # Community agriculture
+  select(c(nh, clust, profit_per_rope,
+           education_max, read_max, write_max, calc_max,   # Education / Literacy
+           region, ez, district, loc2, loc3, loc5,         # Location based
            )
          )
 
-#Replaces all NA values with 0
-#The 0 indicated not applicable or no for community variables
-hh_agri_edu_profit[is.na(hh_agri_edu_profit)] <- 0
+options(scipen = 999) #take out scientific notation
 
 
 # ---- Analysis ----
 
-model_community <- lm(data = hh_agri_edu_profit, 
-              profit_per_rope ~ 
-                road + bank + daily_market + periodic_market +    # Community economy
-                prim_school + jss_school +                        # Community education
-                agg_ext_center + community_coop + irrigated_fields + sharecroppers + farm_mutual_aid # Community agriculture
-              )
-summary(model_community)
+model_all <- lm(data = hh_agri_edu_profit, 
+              profit_per_rope ~ education_max + read_max + write_max + calc_max +
+                                region + ez + district + loc2 + loc3 + loc5)
+summary(model_all)
 
-test <- hh_agri_edu_profit %>%
-  select(-region_district)
-  
-cor(test)
+# Variables with the highest significance: 
+#     write_max, region, district, loc5
+
+model_reduced = lm(data = hh_agri_edu_profit,
+                   profit_per_rope ~ education_max*write_max + region + district + loc5)
+summary(model_reduced)
 
 ggplot(data = hh_agri_edu_profit, 
+       mapping = aes(x = read_max, y = profit_per_rope)) +
+  geom_point() +
+  geom_smooth()
+
+ggplot(data = hh_agri_edu_profit,
+       mapping = aes(x = education_max)) +
+  geom_bar()
+
+ggplot(data = hh_agri_edu_profit,
        mapping = aes(x = education_max, y = profit_per_rope)) +
-  geom_point()
+  geom_boxplot()
 
 ggplot(data = hh_agri_edu_profit, 
        mapping = aes(x = profit_per_rope)) + 
   geom_histogram() +
   xlab("Profit per Rope of Land") +
   labs(title = "Profit per ropes of Land, Grouped by Household")
+plot(model_reduced)
 
