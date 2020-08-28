@@ -16,11 +16,10 @@ education       <- read_dta("raw_data/sec2a.dta")   # Education - General survey
 literacy        <- read_dta("raw_data/sec2c.dta")   # Education - Literacy / Apprenticeship 
 agg2            <- read_dta("raw_data/aggregates/agg2.dta") # Agricultural income & farm depreciation
 
-community_overview <- read_dta("raw_data/community/cs0.dta")
-community_econ <- read_dta("raw_data/community/cs2.dta")
-community_edu <- read_dta("raw_data/community/cs3.dta")
-community_crops <- read_dta("raw_data/community/cs5a.dta")
-community_agg <- read_dta("raw_data/community/cs5b.dta")
+community_econ      <- read_dta("raw_data/community/cs2.dta")  # Economy and Infrastructure
+community_edu       <- read_dta("raw_data/community/cs3.dta")  # Education
+commnity_crops      <- read_dta("raw_data/community/cs5a.dta") # Agriculture (Might look into)
+community_agg       <- read_dta("raw_data/community/cs5b.dta") # Agriculture
 
 #     Reads in data for OS/MAC (local folder)
 
@@ -165,7 +164,7 @@ hh_write <- group_by(literacy, clust, nh) %>%
 hh_calc <- group_by(literacy, clust, nh) %>% 
   summarize(calc_max = max(calculation))
 
-# Ignore this dataframe
+# Combines read, write, calc
 lit_levels <- hh_read %>%
   inner_join(hh_write) %>% 
   inner_join(hh_calc)
@@ -184,12 +183,12 @@ aggrev <- agg2 %>%
 options(scipen = 999) #take out scientific notation
 
 
-# ---- Commmunity ----
+# ---- Community ----
 
-#Renaming, selecting, and editing relevant variables in each table to make dummy variables consistent throughout dataset
-#grouping my region, district and eanum because enumeration area number reflects 
-#and adjusting each enumeration area number to match "clust" variables used in household data.
-#taking the minimum values of each column because entries of "2" mean "no" and entries of "1" mean yes
+# Renaming, selecting, and editing relevant variables in each table to make dummy variables consistent throughout dataset
+# grouping by region, district and eanum because enumeration area number reflects 
+# and adjusting each enumeration area number to match "clust" variables used in household data.
+# taking the minimum values of each column because entries of "2" mean "no" and entries of "1" mean yes
 
 
 community_econ <- community_econ %>% 
@@ -298,10 +297,14 @@ hh_agri_edu_profit <- aggrev %>%
   inner_join(agri_land) %>%
   left_join(hh_edu_ag) %>%   
   left_join(lit_levels) %>%
+  left_join(community_full) %>%
   mutate(profit_per_rope = round(profit / hh_land_ropes, 2)) %>%  # profit per area variable
   select(c(nh, clust, profit_per_rope,
-           education_max, read_max, write_max, calc_max,   # Education / Literacy
-           region, ez, district, loc2, loc3, loc5,         # Location based
+           region, ez, district, loc2, loc5,               # Location based
+           education_max, read_max, write_max, calc_max,   # HH Education / Literacy
+           road, bank, daily_market, periodic_market,      # Community economy
+           prim_school, jss_school,                        # Community education
+           agg_ext_center, community_coop, irrigated_fields, sharecroppers, farm_mutual_aid # Community agriculture
            )
          )
 
