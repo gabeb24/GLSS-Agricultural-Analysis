@@ -298,9 +298,10 @@ hh_agri_edu_profit <- aggrev %>%
   left_join(hh_edu_ag) %>%   
   left_join(lit_levels) %>%
   left_join(community_full) %>%
+  unite(region_district, region, district, sep = '_') %>% 
   mutate(profit_per_rope = round(profit / hh_land_ropes, 2)) %>%  # profit per area variable
-  select(c(nh, clust, profit_per_rope,
-           region, ez, district, loc2, loc5,               # Location based
+  select(c(nh, clust, region_district, ez, loc2, loc5,  # Location based
+           profit_per_rope,                             #Profit variable
            education_max, read_max, write_max, calc_max,   # HH Education / Literacy
            road, bank, daily_market, periodic_market,      # Community economy
            prim_school, jss_school,                        # Community education
