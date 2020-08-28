@@ -315,10 +315,6 @@ hh_agri_edu_profit <- aggrev %>%
            )
          )
 
-#Replaces all NA values with 0
-#The 0 indicated not applicable or no for community variables
-hh_agri_edu_profit[is.na(hh_agri_edu_profit)] <- 0
-
 
 # ---- Analysis ----
 
