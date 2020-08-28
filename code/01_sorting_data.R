@@ -256,31 +256,36 @@ community_agg <- community_agg %>%
   mutate(
     agg_ext_center = case_when(
       s5bq5 == 2 ~ 0,
-      s5bq5 == 1 ~ 1
+      s5bq5 == 1 ~ 1,
+      is.na(s5bq5) ~ 0
     )
   ) %>% 
   mutate(
     community_coop = case_when(
       s5bq10 == 2 ~ 0,
-      s5bq10 == 1 ~ 1 
+      s5bq10 == 1 ~ 1,
+      is.na(s5bq10) ~ 0
     )
   ) %>% 
   mutate(
     irrigated_fields = case_when(
       s5bq17 == 2 ~ 0,
-      s5bq17 == 1 ~ 1
+      s5bq17 == 1 ~ 1,
+      is.na(s5bq17) ~ 0
     )
   ) %>% 
   mutate(
     sharecroppers = case_when(
       s5bq20 == 2 ~ 0,
-      s5bq20 == 1 ~ 1
+      s5bq20 == 1 ~ 1,
+      is.na(s5bq20) ~ 0
     )
   ) %>% 
   mutate(
     farm_mutual_aid = case_when(
       s5bq23 == 2 ~ 0,
-      s5bq23 == 1 ~ 1
+      s5bq23 == 1 ~ 1,
+      is.na(s5bq23) ~ 0
     )
   ) %>% 
   select(region, district, clust, agg_ext_center, community_coop, irrigated_fields, sharecroppers, farm_mutual_aid)
