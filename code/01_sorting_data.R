@@ -237,7 +237,7 @@ community_edu <- community_edu %>%
   mutate(
     jss_school = case_when(
       s3q11 == 2 ~ 0,
-      s3q11 == 1 ~ 0
+      s3q11 == 1 ~ 1
     )
   ) %>% 
   mutate(
