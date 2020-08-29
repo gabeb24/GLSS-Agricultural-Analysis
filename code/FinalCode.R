@@ -29,10 +29,10 @@ education       <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec2a.
 literacy        <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/sec2c.dta")
 agg2            <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/aggregates/agg2.dta")
 
-community_econ      <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/cs2.dta") 
-community_edu       <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/cs3.dta")  
-commnity_crops      <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/cs5a.dta") 
-community_agg       <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/cs5b.dta") 
+community_econ      <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/community/cs2.dta") 
+community_edu       <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/community/cs3.dta")  
+commnity_crops      <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/community/cs5a.dta") 
+community_agg       <- read_dta("~/Downloads/GIT Folder Seattle U/glss4_new 2/community/cs5b.dta") 
 
 
 # ---- Agriculture code ----
@@ -297,7 +297,7 @@ community_full <- community_econ %>%
   inner_join(community_edu) %>% 
   left_join(community_agg)
 
-# ---- Joining Agriculture / Education / Profit ----
+# ---- Joining Agriculture / Education / Profit / Community ----
 
 hh_agri_edu_profit <- aggrev %>%
   inner_join(agri_land) %>%
@@ -315,29 +315,155 @@ hh_agri_edu_profit <- aggrev %>%
            )
          )
 
+#Replaces all NA values with 0
+#The 0 indicated not applicable or no for community variables
+hh_agri_edu_profit[is.na(hh_agri_edu_profit)] <- 0
+
 
 # ---- Analysis ----
 
-model_community <- lm(data = hh_agri_edu_profit, 
-              profit_per_rope ~ 
-                road + bank + daily_market + periodic_market +    # Community economy
-                prim_school + jss_school +                        # Community education
-                agg_ext_center + community_coop + irrigated_fields + sharecroppers + farm_mutual_aid # Community agriculture
+#create a summary of the model
+summary(hh_agri_edu_profit)
+
+#view the correlation between all variables in the model
+cor(select(hh_agri_edu_profit, -region_district))
+
+
+# Reduced linear model
+model_lm <- lm(data = hh_agri_edu_profit, 
+                profit_per_rope ~
+                  road +                      # Community economy
+                  prim_school * jss_school +  # Community education
+                  community_coop + sharecroppers + farm_mutual_aid # Community agriculture
               )
-summary(model_community)
 
-test <- hh_agri_edu_profit %>%
-  select(-region_district)
-  
-cor(test)
+summary(model_lm)
+plot(model_lm)
 
-ggplot(data = hh_agri_edu_profit, 
-       mapping = aes(x = education_max, y = profit_per_rope)) +
-  geom_point()
 
-ggplot(data = hh_agri_edu_profit, 
-       mapping = aes(x = profit_per_rope)) + 
-  geom_histogram() +
-  xlab("Profit per Rope of Land") +
-  labs(title = "Profit per ropes of Land, Grouped by Household")
+# Reduced log model
+model_log <- lm(data = hh_agri_edu_profit, 
+               log(profit_per_rope) ~
+                 I(education_max^2) + education_max +   # HH Education / Literacy
+                 road + bank +                          # Community economy
+                 prim_school * jss_school +             # Community education
+                 community_coop + sharecroppers + farm_mutual_aid # Community agriculture
+              )
 
+summary(model_log)
+plot(model_log)
+
+
+# model_all_lm <- lm(data = hh_agri_edu_profit,
+#                 profit_per_rope ~
+#                   ez + loc2 + loc5 +                                  # Location based
+#                   education_max + read_max + write_max + calc_max +   # Education
+#                   road + bank + daily_market + periodic_market +      # Community economy
+#                   prim_school + jss_school +                          # Community education
+#                   agg_ext_center + community_coop + irrigated_fields + sharecroppers + farm_mutual_aid # Community agriculture
+# )
+# summary(model_all_lm)
+# 
+# model_all_log <- lm(data = hh_agri_edu_profit,
+#                    log(profit_per_rope) ~
+#                      ez + loc2 + loc5 +                                  # Location based
+#                      education_max + read_max + write_max + calc_max +   # Education
+#                      road + bank + daily_market + periodic_market +      # Community economy
+#                      prim_school + jss_school +                          # Community education
+#                      agg_ext_center + community_coop + irrigated_fields + sharecroppers + farm_mutual_aid # Community agriculture
+# )
+# summary(model_all_log)
+
+
+
+# model_community <- lm(data = hh_agri_edu_profit, 
+#               profit_per_rope ~ 
+#                 road + bank + daily_market + periodic_market +    # Community economy
+#                 prim_school + jss_school +                        # Community education
+#                 agg_ext_center + community_coop + irrigated_fields + sharecroppers + farm_mutual_aid # Community agriculture
+#               )
+# summary(model_community)
+# 
+
+# --- Analysis Graphs ----
+
+#create linear model of model 1
+model_1 <- lm(data=hh_agri_edu_profit,
+              profit_per_rope ~ education_max + ez + 
+                education_max + read_max + write_max + calc_max +   
+                loc2 + loc5 + road + bank + daily_market+prim_school+jss_school+community_coop + sharecroppers + farm_mutual_aid )
+#view summary of linear model
+summary(model_1)
+
+# #create scatter plot education max, calc max, read max, write max
+# ggplot(data = model_1, 
+#        mapping = aes(x =education_max + write_max + calc_max + read_max,
+#                      y = profit_per_rope)) + 
+#   geom_point( mapping = aes(color='education_max'))
+ggplot(data=model_1,
+       mapping = aes(x =education_max,y=profit_per_rope,color='educartin_max'))+
+  geom_point(alpha=.1)+
+  geom_point( mapping = aes(x =jss_school,y=profit_per_rope,color='jss_school'))+
+  geom_point(alpha=.1)+
+  geom_point( mapping = aes(x =prim_school,y=profit_per_rope,color='prim_school'))+
+  geom_point(alpha=.1)+
+  xlab("Level of Education")+
+  ylab("profit_per_rope")+
+  labs(title=" Household Profit Per Rope by Level of Education")
+#create density plot calc max and education max and read max and write max combined
+ggplot(data = model_1)+ 
+  geom_density( mapping = aes(x=road, fill='road',))+
+  geom_density( mapping = aes(x=bank, fill='bank',))+
+  geom_density( mapping = aes(x=community_coop, fill='community_coop',))+
+  geom_density( mapping = aes(x=sharecroppers, fill='sharecroppers',))+
+  geom_density( mapping = aes(x=farm_mutual_aid, fill='farm_mutual_aid'))+
+  xlab("Number of Banks, Community_ Coop, Farm_mutual_aid, road and Sharcroppers in Community") +
+  labs(title = "Density of Community Features Per Household")
+#create density plot of education
+ggplot(data = model_1)+
+  geom_density( mapping = aes(x=education_max, fill='education_max',))+
+  geom_density( mapping = aes(x=prim_school, fill='prim_school',))+
+  geom_density( mapping = aes(x=jss_school, fill='jss_school',))+
+  xlab("Amount of Education") +
+  labs(title = "Dnsity of Education Per Household")
+#create histogram community 
+ggplot(data = model_1)+ 
+  geom_histogram( mapping = aes(x=road, fill='road',))+
+  geom_histogram( mapping = aes(x=bank, fill='bank',))+
+  geom_histogram( mapping = aes(x=community_coop, fill='community_coop',))+
+  geom_histogram( mapping = aes(x=sharecroppers, fill='sharecroppers',))+
+  geom_histogram( mapping = aes(x=farm_mutual_aid, fill='farm_mutual_aid'))+
+  xlab("Number of Banks, Community_ Coop, Farm_mutual_aid, road and Sharcroppers in Community") +
+  labs(title = "Number of Community Features Per Household")
+#create histogramof education
+ggplot(data = model_1)+
+  geom_histogram( mapping = aes(x=education_max, fill='education_max',))+
+  geom_histogram( mapping = aes(x=prim_school, fill='prim_school',))+
+  geom_histogram( mapping = aes(x=jss_school, fill='jss_school',))+
+  xlab("Level") +
+  #create scatter plot of education
+  ggplot(data=model_1,
+         mapping = aes(x =education_max,y=profit_per_rope,color='educartin_max'))+
+  geom_point(alpha=.1)+
+  geom_point( mapping = aes(x =jss_school,y=profit_per_rope,color='jss_school'))+
+  geom_point(alpha=.1)+
+  geom_point( mapping = aes(x =prim_school,y=profit_per_rope,color='prim_school'))+
+  geom_point(alpha=.1)+
+  xlab("Level of Education")+
+  ylab("profit_per_rope")+
+  labs(title=" Household Profit Per Rope by Level of Education")
+#create scatter plot of community
+ggplot(data=model_1,
+       mapping = aes(x =bank,y=profit_per_rope,color='bank'))+
+  geom_point(alpha=.1)+
+  geom_point( mapping = aes(x =community_coop,y=profit_per_rope,color='community_coop'))+
+  geom_point(alpha=.1)+
+  geom_point( mapping = aes(x =farm_mutual_aid,y=profit_per_rope,color='farm_mutual_aid'))+
+  geom_point(alpha=.1)+
+  geom_point( mapping = aes(x =road,y=profit_per_rope,color='road'))+
+  geom_point(alpha=.1)+
+  geom_point( mapping = aes(x =sharecroppers,y=profit_per_rope,color='sharecroppers'))+
+  geom_point(alpha=.1)+
+  xlab("Number Within Community")+
+  ylab("profit_per_rope")+
+  labs(title=" Household Profit Per Rope by Existence of Community Feature")
