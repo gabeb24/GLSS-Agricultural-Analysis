@@ -1,0 +1,55 @@
+# ---- General Education ----
+
+edu_agg <- education %>% # general education @ individual level
+  
+ # no_education column gives a 1 to those without any education
+  mutate(
+    no_education = case_when(
+      s2aq1 == 2 ~ 1,
+      s2aq1== 1 ~ 0,
+      TRUE ~ 1
+    )
+  ) %>%  
+  
+  #  koranic_kinder_educ column gives a 1 to those with any education above none or NA but below primary education
+  mutate(
+    koranic_kinder_educ = case_when(
+      is.na(s2aq2) ~ 0,
+      s2aq2 ==2 ~ 1,
+      s2aq2 ==1 ~ 1,
+      s2aq2 !=2 ~ 0,
+      s2aq2 !=1~ 0,
+      TRUE ~ 1
+    )
+  ) %>% 
+  
+  # prim_educ column gives a 1 to those only with primary education 
+  mutate(
+    prim_educ = case_when(
+      is.na(s2aq2) ~ 0,
+      s2aq2 == 3 ~ 1,
+      s2aq2 != 3 ~ 0,
+      TRUE ~ 1
+    )
+  ) %>% 
+  
+  # sec_educ column gives a 1 to those only with secondary education 
+  mutate(
+    sec_educ = case_when(
+      is.na(s2aq2) ~ 0,
+      s2aq2 < 3 ~ 0,
+      s2aq2 ==3 ~ 0,
+      s2aq2 > 3 ~ 1,
+      TRUE ~ 1
+    )
+  ) 
+
+# Grouped by household we now see the highest level of our 4 levels of education 
+# achieved for each household indicated by a 1 value in the highest level category
+
+hh_edu_ag <- group_by(edu_agg, clust, nh)%>%
+  select(clust,nh,no_education,koranic_kinder_educ,prim_educ,sec_educ)
+  
+  
+
+
