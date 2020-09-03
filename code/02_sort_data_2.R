@@ -39,13 +39,31 @@
 
 
 # ---- Survey Info ----
-
 survey_info_a <- survey_info_a %>% 
   mutate(
     eco_zone = case_when(
       ez == 1 ~ 'coastal',
       ez == 2 ~ 'forest',
       ez == 3 ~ 'savannah'
+    )
+  ) %>% 
+  
+  mutate(
+    coastal_zone = case_when(
+      ez == 1 ~ 1,
+      ez != 1 ~ 0
+    )
+  ) %>% 
+  mutate(
+    forest_zone = case_when(
+      ez == 2 ~ 1,
+      ez != 2 ~ 0
+    )
+  ) %>% 
+  mutate(
+    savannah_zone = case_when(
+      ez == 3 ~ 1,
+      ez != 3 ~ 0
     )
   ) %>% 
   mutate(
@@ -55,12 +73,9 @@ survey_info_a <- survey_info_a %>%
     )
   ) %>% 
   mutate(
-    area_type = case_when(
-      loc5 == 1 ~ 'accra',
-      loc5 == 2 ~ 'other urban',
-      loc5 == 3 ~ 'rural coast',
-      loc5 == 4 ~ 'rural forest',
-      loc5 == 5 ~ 'rural savannah'
+    rural = case_when(
+      loc2 == 1 ~ 0,
+      loc2 == 2 ~ 1
     )
   )
 
