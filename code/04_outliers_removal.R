@@ -40,11 +40,17 @@ summary(savannah)
 #avg max education = 1.58, median = 2
 
 
-#Removing outliers
-hh_agri_profit <- hh_agri_profit %>% 
-  filter(profit_per_rope < 300000) %>% 
-  filter(profit_per_rope > -300000) #%>% 
-#select(1:22)
+#----new outlier removal method----
+rev_hh_agri_profit <- hh_agri_profit %>% 
+  arrange(desc(profit_per_rope)) %>% 
+  slice(21:n()) %>% 
+  arrange(profit_per_rope) %>% 
+  slice(21:n())
+#remember to run regression with and without outliers!
+
+
+
+summary(rev_hh_agri_profit$profit_per_rope)
 
 
 summary(hh_agri_profit$profit_per_rope)
