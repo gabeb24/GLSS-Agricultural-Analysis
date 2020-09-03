@@ -129,6 +129,15 @@ edu_agg <- education %>% # general education @ individual level
 hh_edu_ag <- group_by(edu_agg, clust, nh) %>% 
   summarize(education_max = max(edu_level))
 
+hh_edu_ag <- hh_edu_ag %>% 
+  mutate(
+    education_level = case_when(
+      education_max == 3 ~ 'Secondary or Above',
+      education_max == 2 ~ 'Primary',
+      education_max == 1 ~ 'Koranic/Kinder',
+      education_max == 0 ~ 'None'
+    )
+  )
 
 # LITERACY
 
