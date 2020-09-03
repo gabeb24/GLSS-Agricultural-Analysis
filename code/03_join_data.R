@@ -15,7 +15,7 @@ hh_agri_profit <- aggrev %>%
   mutate(profit_per_rope = round(profit / hh_land_ropes, 2)) %>%                             # create profit per area variable
   select(c(nh, clust, region_district, eco_zone, urban_rural, area_type,                     # Location based
            profit_per_rope,                                                                  # Profit variable
-           education_max, read_max, write_max, calc_max,                                     # HH Education / Literacy
+           education_max, education_level, read_max, write_max, calc_max,                                     # HH Education / Literacy
            road, bank, daily_market, periodic_market,                                        # Community economy
            prim_school, jss_school,                                                          # Community education
            agg_ext_center, community_coop, irrigated_fields, sharecroppers, farm_mutual_aid  # Community agriculture
