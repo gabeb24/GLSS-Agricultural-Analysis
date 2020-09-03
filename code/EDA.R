@@ -129,10 +129,10 @@ edu_agg <- education %>% # general education @ individual level
   #0 otherwise
   mutate(
     edu_level = case_when(
-      sec_educ == 1 ~ 3,
-      prim_educ == 1 ~ 2,
-      koranic_kinder_educ == 1 ~ 1,
-      koranic_kinder_educ == 0 ~ 0
+      sec_educ == 1 ~ 'Secondary or Above',
+      prim_educ == 1 ~ 'Primary',
+      koranic_kinder_educ == 1 ~ 'Koranic/Kindergarten',
+      koranic_kinder_educ == 0 ~ 'None'
     )
   )
 
@@ -157,10 +157,10 @@ literacy <- literacy %>%
       #2 if they only read english
       #1 if they only read ghanian
       #0 if they don't read either
-      s2cq1 == 1 & s2cq2 != 1 ~ 3,
-      s2cq1 == 1 & s2cq2 == 1 ~ 2,
-      s2cq1 == 2 & s2cq2 != 1 ~ 1,
-      s2cq1 == 2 & s2cq2 == 1 ~ 0
+      s2cq1 == 1 & s2cq2 != 1 ~ 'English and Ghanian',
+      s2cq1 == 1 & s2cq2 == 1 ~ 'English',
+      s2cq1 == 2 & s2cq2 != 1 ~ 'Ghanian',
+      s2cq1 == 2 & s2cq2 == 1 ~ 'None'
     )
   ) %>% 
   
@@ -170,10 +170,10 @@ literacy <- literacy %>%
       #2 if they only write english
       #1 if they only write ghanian
       #0 if they don't write either
-      s2cq3 == 1 & s2cq4 != 1 ~ 3,
-      s2cq3 == 1 & s2cq4 == 1 ~ 2,
-      s2cq3 == 2 & s2cq4 != 1 ~ 1,
-      s2cq3 == 2 & s2cq4 == 1 ~ 0,
+      s2cq3 == 1 & s2cq4 != 1 ~ 'English and Ghanian',
+      s2cq3 == 1 & s2cq4 == 1 ~ 'English',
+      s2cq3 == 2 & s2cq4 != 1 ~ 'Ghanian',
+      s2cq3 == 2 & s2cq4 == 1 ~ 'None',
     )
   ) %>% 
   
@@ -379,31 +379,28 @@ summary(savannah)
   #avg max education = 1.58, median = 2
 
 
-#Removing outliers
-hh_agri_profit <- hh_agri_profit %>% 
-  filter(profit_per_rope < 300000) %>% 
-  filter(profit_per_rope > -300000) %>% 
-  select(1:22)
-
-
-summary(hh_agri_profit$profit_per_rope)
-
-plot(hh_agri_profit$profit_per_rope, xlab = 'Household')
+hist(hh_agri_profit$profit_per_rope,
+     breaks = 100,
+     xlab = "Profit per Rope")
 
 
 
-#Old model after outliers removed from data
-model_lm <- lm(data = hh_agri_profit, 
-               profit_per_rope ~
-                 road +                      # Community economy
-                 prim_school * jss_school +  # Community education
-                 community_coop + sharecroppers + farm_mutual_aid # Community agriculture
-)
-
-summary(model_lm)
-plot(model_lm)
+#----new outlier removal method----
+rev_hh_agri_profit <- hh_agri_profit %>% 
+  arrange(desc(profit_per_rope)) %>% 
+  slice(21:n()) %>% 
+  arrange(profit_per_rope) %>% 
+  slice(21:n())
+#remember to run regression with and without outliers!
 
 
+
+summary(rev_hh_agri_profit$profit_per_rope)
+
+
+hist(test_slice$profit_per_rope,
+     breaks = 100,
+     xlab = "Profit per Rope")
 
 
 #Education level distribution after removing outliers
@@ -412,12 +409,6 @@ edu_plot <-
   ggplot(aes(x = education_max)) +
   geom_bar()
 edu_plot
-
-
-
-#not super relevant was just looking at urban vs rural as boxplot
-#ggplot(hh_agri_profits, aes(urban_rural, profit_per_rope)) +
-  #geom_boxplot()
 
 
 
