@@ -13,7 +13,7 @@ hh_agri_profit <- aggrev %>%
   left_join(community_full) %>%
   unite(region_district, region, district, sep = '_') %>% 
   mutate(profit_per_rope = round(profit / hh_land_ropes, 2)) %>%                             # create profit per area variable
-  select(c(nh, clust, region_district, eco_zone, urban_rural, area_type,                     # Location based
+  select(c(nh, clust, region_district, eco_zone, coastal_zone, forest_zone, savannah_zone, urban_rural, rural                   # Location based
            profit_per_rope,                                                                  # Profit variable
            education_max, education_level, read_max, write_max, calc_max,                                     # HH Education / Literacy
            road, bank, daily_market, periodic_market,                                        # Community economy
