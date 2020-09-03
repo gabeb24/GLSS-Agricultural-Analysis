@@ -116,10 +116,10 @@ edu_agg <- education %>% # general education @ individual level
   #0 otherwise
   mutate(
     edu_level = case_when(
-      sec_educ == 1 ~ 'Secondary or Above',
-      prim_educ == 1 ~ 'Primary',
-      koranic_kinder_educ == 1 ~ 'Koranic/Kindergarten',
-      koranic_kinder_educ == 0 ~ 'None'
+      sec_educ == 1 ~ 3,
+      prim_educ == 1 ~ 2,
+      koranic_kinder_educ == 1 ~ 1,
+      koranic_kinder_educ == 0 ~ 0
     )
   )
 
