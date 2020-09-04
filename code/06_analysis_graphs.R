@@ -21,6 +21,8 @@ model_lm <- lm(data = rev_hh_agri_profit,
 
 summary(model_lm) # view summary of linear model
 
+plot(model_lm)
+
 
 
 # Log model with forest_zone and rural zone
