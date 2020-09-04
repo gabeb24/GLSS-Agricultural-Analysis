@@ -16,7 +16,7 @@ rev_hh_agri_profit <- hh_agri_profit %>%
 #remember to run regression with and without outliers!
 
 
-# ---- Summary statistics ----
+# ---- Outlier Summary Statistics ----
 
 # Summary w/o outliers
 summary(rev_hh_agri_profit$profit_per_rope)
