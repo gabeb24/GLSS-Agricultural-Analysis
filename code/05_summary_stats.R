@@ -46,7 +46,8 @@ summary(forest)
 
 #Graph of proportion of max education level in forest households
 ggplot(data = forest) +
-  geom_bar(mapping = aes(x = education_level, y = stat(prop), group = 1))
+  geom_bar(mapping = aes(x = education_level, y = stat(prop), group = 1, fill = 'red')) +
+  ggtitle('Forest Zone education')
   #We can see that forest households have the largest proportion that have completed secondary or above.
   
 
