@@ -1,14 +1,13 @@
 # ---- Data Translation Challenge ----
 
 # This file contains basic summary statistics.
-
-# ---- Data Translation Challenge ----
-
-# This file contains basic summary statistics.
+# Comments include statistics after the code is run.
 
 
-# ---- Summary statistics prior to removing outliers
+# ---- Summary statistics prior to removing outliers ----
+
 summary(hh_agri_profit)
+
 #Mean profit_per_rope = 91650
 #Median profit_per_rope = 33708
 #Min = -646912
@@ -16,7 +15,7 @@ summary(hh_agri_profit)
 #Mean max education level is 2.05
 
 #--With the mean profit per rope 57342 greater than the median, the data is heavily right skewed
-#this skew is expected for income data. Outliers will be addressed later on.--
+# this skew is expected for income data. Outliers will be addressed later on.--
 
 negative_values <- hh_agri_profit %>% 
   filter(profit_per_rope < 0) %>% 
@@ -24,7 +23,8 @@ negative_values <- hh_agri_profit %>%
 #We can see that there are 216 households (5%) in the dataset with negative agricultural profits.
 
 
-#---- Summary statistics of different eco-zones
+#---- Summary statistics of different eco-zones ----
+
 coastal <- subset(hh_agri_profit, eco_zone == 'coastal')
 summary(coastal)
 #of 20% of households being on coastal areas
@@ -63,8 +63,8 @@ ggplot(data = savannah) +
 
 
 
+#----Summary statistics of urban vs rural: ----
 
-#----summary statistics of urban vs rural:
 rural <- subset(hh_agri_profit, urban_rural == 'rural')
 summary(rural)
 #rural households account for 83% households
@@ -85,7 +85,8 @@ ggplot(data = urban) +
 
 
 
-#----Summary statistics of education levels
+#----Summary statistics of education levels ----
+
 secondary_above <- subset(hh_agri_profit, education_max == 3)
 summary(secondary_above)
 #54% of households have a max education of secondary or above
@@ -108,7 +109,6 @@ summary(koranic_kinder)
 
 
 
-
 #----Summary Stats after outlier removal----
 #Mean profit per rope = 76616
 #median ppr = 33708
@@ -117,7 +117,7 @@ summary(koranic_kinder)
 #We can see that removing 40 of the most extreme values reduced the difference between the median and mean
 #by 14434. We have chosen to not further remove outliers to keep some for analysis purpose.
 
-#eco-zones
+#-eco-zones
 rev_coastal <- subset(rev_hh_agri_profit, eco_zone == 'coastal')
 summary(rev_coastal$profit_per_rope)
 # the avg profit is 70680, median = 21449, max = 1906764 (largest in entire dataset.), min = -38299
